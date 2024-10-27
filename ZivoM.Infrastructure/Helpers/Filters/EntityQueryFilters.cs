@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace ZivoM.Helpers
+namespace ZivoM.Infrastructure.Helpers
 {
     public static class EntityQueryFilters
     {

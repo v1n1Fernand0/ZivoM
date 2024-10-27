@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ZivoM.Categories;
 using ZivoM.Entities;
-using ZivoM.Helpers;
+using ZivoM.Infrastructure.Helpers.Filters;
 using ZivoM.Transactions;
 
 namespace ZivoM.Contexts

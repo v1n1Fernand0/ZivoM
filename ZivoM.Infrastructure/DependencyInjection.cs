@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ZivoM.Categories;
 using ZivoM.Contexts;
+using ZivoM.Infrastructure.Services;
 using ZivoM.Transactions;
 
 namespace ZivoM.Infrastructure
@@ -16,11 +17,12 @@ namespace ZivoM.Infrastructure
             services.AddDbContext<ZivoMDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
+            services.AddHttpClient<KeycloakUserService>();
+
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             return services;
-
         }
     }
 }

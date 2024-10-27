@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZivoM.Application", "ZivoM.Application\ZivoM.Application.csproj", "{718D3478-A4B7-4685-8382-2B1BD0EA2CD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZivoM.Application", "ZivoM.Application\ZivoM.Application.csproj", "{718D3478-A4B7-4685-8382-2B1BD0EA2CD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZivoM.Domain", "ZivoM.Domain\ZivoM.Domain.csproj", "{29D8BAF6-964E-48A1-91DF-982C2E81A14A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZivoM.Domain", "ZivoM.Domain\ZivoM.Domain.csproj", "{29D8BAF6-964E-48A1-91DF-982C2E81A14A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZivoM.Infrastructure", "ZivoM.Infrastructure\ZivoM.Infrastructure.csproj", "{BC6BB21D-5D40-4BC4-885C-EEBB46AFEDF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZivoM.Infrastructure", "ZivoM.Infrastructure\ZivoM.Infrastructure.csproj", "{BC6BB21D-5D40-4BC4-885C-EEBB46AFEDF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZivoM.Tests", "ZivoM.Tests\ZivoM.Tests.csproj", "{35F1B0C4-F604-4DA1-9666-BF5BA72D211B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZivoM.Tests", "ZivoM.Tests\ZivoM.Tests.csproj", "{35F1B0C4-F604-4DA1-9666-BF5BA72D211B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZivoM.Api", "ZivoM.Api\ZivoM.Api.csproj", "{25EFDDC6-C2B1-4CF4-BF9F-11C8DDF62B20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZivoM.Api", "ZivoM.Api\ZivoM.Api.csproj", "{25EFDDC6-C2B1-4CF4-BF9F-11C8DDF62B20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
