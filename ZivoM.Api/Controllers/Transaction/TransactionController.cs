@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ZivoM.Interfaces;
 using ZivoM.Transactions;
 
@@ -6,6 +7,7 @@ namespace ZivoM.Api.Controllers.Transactions
 {
     [Route("api/transaction")]
     [ApiController]
+    [Authorize]
     public class TransactionController : ControllerBase
     {
         private readonly ITransactionService _transactionService;
