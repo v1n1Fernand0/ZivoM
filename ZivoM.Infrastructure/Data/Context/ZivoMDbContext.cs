@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ZivoM.Categories;
 using ZivoM.Entities;
-using ZivoM.Infrastructure.Helpers.Filters;
+using ZivoM.Infrastructure.Helpers;
 using ZivoM.Transactions;
 
 namespace ZivoM.Contexts
@@ -27,7 +27,7 @@ namespace ZivoM.Contexts
             foreach (var clrType in entityTypes)
                 modelBuilder.Entity(clrType)
                     .HasQueryFilter(EntityQueryFilters.CreateIsDeletedFilter(clrType));
-            
+
         }
     }
 }

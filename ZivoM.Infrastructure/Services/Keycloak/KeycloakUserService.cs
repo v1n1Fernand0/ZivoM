@@ -71,5 +71,33 @@ namespace ZivoM.Infrastructure.Services
             var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(responseContent);
             return tokenResponse?.AccessToken ?? throw new InvalidOperationException(KeycloakServiceMessages.AccessTokenRetrievalFailed);
         }
+
+        public async Task<string> AuthenticateAsync(string username, string password)
+        {
+            var clientId = _configuration["Keycloak:ClientId"];
+            var authority = _configuration["Keycloak:Authority"];
+
+            if (string.IsNullOrEmpty(clientId))
+                throw new InvalidOperationException(KeycloakServiceMessages.ClientIdMissing);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{authority}/protocol/openid-connect/token");
+            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                ["client_id"] = clientId,
+                ["grant_type"] = "password",
+                ["username"] = username,
+                ["password"] = password
+            });
+
+            var response = await _httpClient.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException(KeycloakServiceMessages.AuthenticationFailed);
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(responseContent);
+            return tokenResponse?.AccessToken ?? throw new InvalidOperationException(KeycloakServiceMessages.AccessTokenRetrievalFailed);
+        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using ZivoM.Accounts;
+using ZivoM.Application.Services;
 using ZivoM.Categories;
 using ZivoM.Interfaces;
 using ZivoM.Transactions;
@@ -12,6 +14,7 @@ namespace ZivoM.Application
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ICategoryService, CategoryService>();
 
