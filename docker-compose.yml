@@ -7,8 +7,11 @@ services:
       dockerfile: Dockerfile
     environment:
       # Configuração de conexão da API com o SQL Server remoto
-      ConnectionStrings__ZivoMDatabase: "Data Source=SQL5111.site4now.net;Initial Catalog=db_a9af87_zivom;User Id=db_a9af87_zivom_admin;Password=@Zivoapp2024"
+      ConnectionStrings__ZivoMDatabase: "Data Source=SQL5111.site4now.net;Initial Catalog=db_a9af87_zivom;User Id=db_a9af87_zivom_admin;Password="
       ASPNETCORE_ENVIRONMENT: "Production"
+      # Configurações do Keycloak para a API
+      Keycloak__Authority: "http://localhost:8080/realms/zivoapp"
+      Keycloak__ClientId: "zivoclient"
     ports:
       - "7676:8080"  # Porta externa 7676 mapeando para a interna 8080
     depends_on:
