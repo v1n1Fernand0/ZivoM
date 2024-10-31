@@ -14,5 +14,7 @@
 
         public const string ServiceUnavailable = "Keycloak service is temporarily unavailable. Please try again later.";
         public const string UnexpectedError = "An unexpected error occurred while communicating with Keycloak.";
+
+        public const string RealmMissing = "Realm for Keycloak is not configured.";
     }
 }

@@ -1,10 +1,12 @@
-using ZivoM.Infrastructure;
-using ZivoM.Application;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ZivoM.Application;
+using ZivoM.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -41,9 +43,11 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// Adicionando a infraestrutura e serviços
 builder.Services.AddInfrastructureService(builder.Configuration);
 builder.Services.AddApplicationServices();
 
+// Configuração de autenticação com Keycloak
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -53,7 +57,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.Authority = builder.Configuration["Keycloak:Authority"];
     options.Audience = builder.Configuration["Keycloak:ClientId"];
-    options.RequireHttpsMetadata = false; 
+    options.RequireHttpsMetadata = false;
 
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -61,8 +65,8 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Keycloak:ClientId"],
         ValidateIssuer = true,
         ValidIssuer = builder.Configuration["Keycloak:Authority"],
-        ValidateLifetime = true, 
-        ValidateIssuerSigningKey = true 
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true
     };
 });
 
@@ -70,11 +74,13 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+// Removendo a verificação de ambiente para habilitar o Swagger em todos os ambientes
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ZivoM.Api V1");
+    c.RoutePrefix = "swagger"; // Garante que o Swagger estará disponível em /swagger
+});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

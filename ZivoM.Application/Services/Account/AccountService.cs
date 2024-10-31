@@ -37,9 +37,13 @@ namespace ZivoM.Application.Services
             {
                 await _keycloakUserService.CreateUserAsync(keycloakUser);
             }
+            catch (HttpRequestException httpEx)
+            {
+                throw new InvalidOperationException(KeycloakServiceMessages.UserCreationFailed, httpEx);
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException(KeycloakServiceMessages.UserCreationFailed, ex);
+                throw new InvalidOperationException($"{KeycloakServiceMessages.UserCreationFailed}: {ex.Message}", ex);
             }
         }
 
@@ -49,9 +53,13 @@ namespace ZivoM.Application.Services
             {
                 return await _keycloakUserService.AuthenticateAsync(login.Username, login.Password);
             }
+            catch (HttpRequestException httpEx)
+            {
+                throw new InvalidOperationException(KeycloakServiceMessages.AuthenticationFailed, httpEx);
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException(KeycloakServiceMessages.AuthenticationFailed, ex);
+                throw new InvalidOperationException($"{KeycloakServiceMessages.AuthenticationFailed}: {ex.Message}", ex);
             }
         }
     }

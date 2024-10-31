@@ -24,9 +24,13 @@ namespace ZivoM.Accounts
                 await _accountService.CreateAccountAsync(userDto);
                 return Ok(new { Message = "User registered successfully" });
             }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = ex.Message });
+                return StatusCode(500, new { Message = "An unexpected error occurred. Please try again later." });
             }
         }
 
@@ -41,9 +45,13 @@ namespace ZivoM.Accounts
                 var token = await _accountService.AuthenticateAsync(loginDto);
                 return Ok(new { Token = token });
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
                 return Unauthorized(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An unexpected error occurred. Please try again later." });
             }
         }
     }

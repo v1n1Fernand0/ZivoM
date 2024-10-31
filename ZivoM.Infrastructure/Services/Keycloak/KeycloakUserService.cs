@@ -11,62 +11,62 @@ namespace ZivoM.Infrastructure.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
+        private readonly string _authority;
+        private readonly string _realm;
+        private readonly string _clientId;
+        private readonly string _clientSecret;
 
         public KeycloakUserService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
             _configuration = configuration;
 
-            var authority = _configuration["Keycloak:Authority"];
-            var realm = _configuration["Keycloak:Realm"];
+            _authority = _configuration["Keycloak:Authority"] ?? throw new InvalidOperationException(KeycloakServiceMessages.AuthorityUrlMissing);
+            _realm = _configuration["Keycloak:Realm"] ?? throw new InvalidOperationException(KeycloakServiceMessages.RealmMissing);
+            _clientId = _configuration["Keycloak:ClientId"] ?? throw new InvalidOperationException(KeycloakServiceMessages.ClientIdMissing);
+            _clientSecret = _configuration["Keycloak:ClientSecret"] ?? throw new InvalidOperationException(KeycloakServiceMessages.ClientSecretMissing);
 
-            if (string.IsNullOrEmpty(authority))
-                throw new InvalidOperationException(KeycloakServiceMessages.AuthorityUrlMissing);
-            if (string.IsNullOrEmpty(realm))
-                throw new InvalidOperationException(KeycloakServiceMessages.ClientIdMissing);
-
-            _httpClient.BaseAddress = new Uri($"{authority}/admin/realms/{realm}");
+            // Configura a URL base para acessar o Keycloak
+            _httpClient.BaseAddress = new Uri($"{_authority}/admin/realms/{_realm}");
         }
 
         public async Task CreateUserAsync(KeycloakUserModel user)
         {
+            // Obtem o token de administrador para a operação
             var token = await GetAdminTokenAsync();
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+            // Serializa o modelo de usuário e realiza a requisição de criação
             var content = new StringContent(JsonSerializer.Serialize(user), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("/users", content);
 
+            // Verifica se a requisição foi bem-sucedida
             if (!response.IsSuccessStatusCode)
             {
-                throw new HttpRequestException(KeycloakServiceMessages.UserCreationFailed);
+                throw new HttpRequestException($"{KeycloakServiceMessages.UserCreationFailed}: {response.ReasonPhrase}");
             }
         }
 
         private async Task<string> GetAdminTokenAsync()
         {
-            var clientId = _configuration["Keycloak:ClientId"];
-            var clientSecret = _configuration["Keycloak:ClientSecret"];
-            var authority = _configuration["Keycloak:Authority"];
-
-            if (string.IsNullOrEmpty(clientId))
-                throw new InvalidOperationException(KeycloakServiceMessages.ClientIdMissing);
-            if (string.IsNullOrEmpty(clientSecret))
-                throw new InvalidOperationException(KeycloakServiceMessages.ClientSecretMissing);
-
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{authority}/protocol/openid-connect/token");
+            // Monta a requisição para obter o token de administrador
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{_authority}/realms/{_realm}/protocol/openid-connect/token");
             request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
-                ["client_id"] = clientId,
-                ["client_secret"] = clientSecret,
+                ["client_id"] = _clientId,
+                ["client_secret"] = _clientSecret,
                 ["grant_type"] = "client_credentials"
             });
 
             var response = await _httpClient.SendAsync(request);
+
+            // Verifica se a requisição foi bem-sucedida
             if (!response.IsSuccessStatusCode)
             {
-                throw new HttpRequestException(KeycloakServiceMessages.AuthenticationFailed);
+                throw new HttpRequestException($"{KeycloakServiceMessages.AuthenticationFailed}: {response.ReasonPhrase}");
             }
 
+            // Processa a resposta JSON para extrair o token de acesso
             var responseContent = await response.Content.ReadAsStringAsync();
             var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(responseContent);
             return tokenResponse?.AccessToken ?? throw new InvalidOperationException(KeycloakServiceMessages.AccessTokenRetrievalFailed);
@@ -74,27 +74,25 @@ namespace ZivoM.Infrastructure.Services
 
         public async Task<string> AuthenticateAsync(string username, string password)
         {
-            var clientId = _configuration["Keycloak:ClientId"];
-            var authority = _configuration["Keycloak:Authority"];
-
-            if (string.IsNullOrEmpty(clientId))
-                throw new InvalidOperationException(KeycloakServiceMessages.ClientIdMissing);
-
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{authority}/protocol/openid-connect/token");
+            // Monta a requisição para autenticação do usuário
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{_authority}/realms/{_realm}/protocol/openid-connect/token");
             request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
-                ["client_id"] = clientId,
+                ["client_id"] = _clientId,
                 ["grant_type"] = "password",
                 ["username"] = username,
                 ["password"] = password
             });
 
             var response = await _httpClient.SendAsync(request);
+
+            // Verifica se a requisição foi bem-sucedida
             if (!response.IsSuccessStatusCode)
             {
-                throw new HttpRequestException(KeycloakServiceMessages.AuthenticationFailed);
+                throw new HttpRequestException($"{KeycloakServiceMessages.AuthenticationFailed}: {response.ReasonPhrase}");
             }
 
+            // Processa a resposta JSON para extrair o token de acesso
             var responseContent = await response.Content.ReadAsStringAsync();
             var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(responseContent);
             return tokenResponse?.AccessToken ?? throw new InvalidOperationException(KeycloakServiceMessages.AccessTokenRetrievalFailed);
